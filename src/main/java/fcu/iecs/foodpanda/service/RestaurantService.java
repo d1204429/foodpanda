@@ -44,6 +44,32 @@ public class RestaurantService {
     return restaurants;
   }
 
+  //實作搜尋餐廳名子的辦法%name
+  public List<Restaurant> getRestaurantsByRestaurantName(String restaurantname){
+    List<Restaurant> restaurants = new ArrayList<>();
+    String sql = "SELECT * FROM restaurant WHERE restaurant_name like ?";
+    try(Connection conn = dbService.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)){
+      pstmt.setString(1, "%" + restaurantname + "%");
+      try(ResultSet rs = pstmt.executeQuery()) {
+        while (rs.next()){
+          Restaurant restaurant = new Restaurant();
+          restaurant.setRestaurant_id(rs.getString("restaurant_id"));
+          restaurant.setRestaurant_name(rs.getString("restaurant_name"));
+          restaurant.setTel(rs.getString("tel"));
+          restaurant.setAddress(rs.getString("address"));
+          restaurant.setOperation_start(rs.getTime("operation_start"));
+          restaurant.setOperation_end(rs.getTime("operation_end"));
+          restaurant.setOperation_status_id(rs.getString("operation_status_id"));
+          restaurants.add(restaurant);
+        }
+      }
+    }catch (SQLException exception){
+      exception.printStackTrace();
+    }
+    return restaurants;
+  }
+
+
   //實作新增餐廳的到db的方法
   public Restaurant addRestaurant(Restaurant restaurant) {
     String sql = "INSERT INTO restaurant ( restaurant_id, restaurant_name, tel, address, operation_start, operation_end, operation_status_id ) VALUES ( ?, ?, ?, ?, ?, ?, ? )";

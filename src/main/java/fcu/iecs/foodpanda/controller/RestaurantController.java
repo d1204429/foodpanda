@@ -25,17 +25,25 @@ public class RestaurantController {
   @Autowired
   RestaurantService restaurantService;
 
+  //實作取得所有餐廳資料
   @GetMapping("")
   public List<Restaurant>getAllRestaurant(){
     return restaurantService.getAllRestaurant();
   }
 
+  //實作搜尋餐廳名子的辦法%name
+  @GetMapping("/name/{keyword}")
+  public List<Restaurant> searchRestaurants(@PathVariable String keyword){
+    return restaurantService.getRestaurantsByRestaurantName(keyword);
+  }
+
+  //實作新增餐廳
   @PostMapping("")
   public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant restaurant) {
     Restaurant addedRestaurant = restaurantService.addRestaurant(restaurant);
     return new ResponseEntity<>(addedRestaurant, HttpStatus.CREATED);
   }
-
+  //實作修改餐廳資料
   @PutMapping("/{id}")
   public ResponseEntity<Restaurant> updateRestaurant(@PathVariable String id, @RequestBody Restaurant restaurant) {
     try {
@@ -57,7 +65,7 @@ public class RestaurantController {
     }
   }
 
-  //實作刪除餐廳的方法
+  //實作刪除餐廳
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteRestaurant(@PathVariable String id) {
     try {
