@@ -44,7 +44,30 @@ public class RestaurantService {
     return restaurants;
   }
 
-  //實作搜尋餐廳名子的辦法%name
+  //實作搜尋餐廳的方法id
+  public Restaurant getRestaurantByRestaurantId(String restaurant_id) {
+    Restaurant restaurant = new Restaurant();
+    String sql = "SELECT * FROM restaurant WHERE restaurant_id = ?";
+    try (Connection conn = dbService.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, restaurant_id);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        if (rs.next()) {
+          restaurant.setRestaurant_id(rs.getString("restaurant_id"));
+          restaurant.setRestaurant_name(rs.getString("restaurant_name"));
+          restaurant.setTel(rs.getString("tel"));
+          restaurant.setAddress(rs.getString("address"));
+          restaurant.setOperation_start(rs.getTime("operation_start"));
+          restaurant.setOperation_end(rs.getTime("operation_end"));
+          restaurant.setOperation_status_id(rs.getString("operation_status_id"));
+        }
+      }
+    } catch (SQLException exception) {
+      exception.printStackTrace();
+    }
+    return restaurant;
+  }
+
+  //實作搜尋餐廳的辦法%name%
   public List<Restaurant> getRestaurantsByRestaurantName(String restaurantname){
     List<Restaurant> restaurants = new ArrayList<>();
     String sql = "SELECT * FROM restaurant WHERE restaurant_name like ?";

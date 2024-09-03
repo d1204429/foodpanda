@@ -30,6 +30,12 @@ public class RestaurantController {
     return restaurantService.getAllRestaurant();
   }
 
+  //實作搜尋餐廳的方法id
+  @GetMapping("/{id}")
+  public Restaurant getRestaurantByRestaurantId(@PathVariable String id){
+    return restaurantService.getRestaurantByRestaurantId(id);
+  }
+
   //實作搜尋餐廳名子的辦法%name
   @GetMapping("/name/{keyword}")
   public List<Restaurant> searchRestaurants(@PathVariable String keyword){
