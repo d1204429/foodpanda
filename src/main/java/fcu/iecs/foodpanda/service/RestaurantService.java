@@ -79,7 +79,6 @@ public class RestaurantService {
   }
 
   //實做更新db餐廳資料的方法
-
   public Restaurant updateRestaurant(Restaurant restaurant) {
     String sql = "UPDATE D1204429_foodpanda.restaurant SET restaurant_name = ?, tel = ?, address = ?, " +
         "operation_start = ?, operation_end = ?, operation_status_id = ? " +
@@ -107,6 +106,17 @@ public class RestaurantService {
       // 在實際應用中，你可能想要記錄錯誤或拋出自定義異常
       e.printStackTrace();
       return null;
+    }
+  }
+
+  //實作刪除餐廳資料的方法
+  public void deleteRestaurant(String restaurant_id) {
+    String sql = "DELETE FROM restaurant WHERE restaurant_id = ?";
+    try (Connection conn = dbService.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, restaurant_id);
+      pstmt.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
