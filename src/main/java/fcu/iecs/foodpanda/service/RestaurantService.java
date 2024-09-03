@@ -20,9 +20,9 @@ public class RestaurantService {
   @Autowired
   DatabaseService dbService;
 
+  //實作從db取得所有餐廳資料的方法
   public List<Restaurant> getAllRestaurant() {
     List<Restaurant> restaurants = new ArrayList<>();
-    //實作從db取得所有餐廳資料的方法
     String sql = "SELECT * FROM restaurant";
     try (Connection conn = dbService.connect(); PreparedStatement pstmt = conn.prepareStatement(
         sql); ResultSet rs = pstmt.executeQuery()) {
