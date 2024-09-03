@@ -2,6 +2,7 @@ package fcu.iecs.foodpanda.controller;
 
 import fcu.iecs.foodpanda.model.Restaurant;
 import fcu.iecs.foodpanda.service.RestaurantService;
+import java.sql.SQLException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+
+@CrossOrigin(origins = "http://localhost:5173")  // 允許特定來源的跨域請求
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -26,55 +31,41 @@ public class RestaurantController {
 
   //實作取得所有餐廳資料
   @GetMapping("")
-  public List<Restaurant>getAllRestaurant(){
+  public ResponseEntity<List<Restaurant>>getAllRestaurant(){
     return restaurantService.getAllRestaurant();
   }
 
-  //實作搜尋餐廳名子的辦法%name
+  //實作搜尋餐廳的方法id
+  @GetMapping("/{id}")
+  public ResponseEntity<Restaurant> getRestaurantByRestaurantId(@PathVariable String id){
+    return restaurantService.getRestaurantByRestaurantId(id);
+  }
+
+  //實作搜尋餐廳名子的辦法%name%
   @GetMapping("/name/{keyword}")
-  public List<Restaurant> searchRestaurants(@PathVariable String keyword){
+  public ResponseEntity<List<Restaurant>> searchRestaurants(@PathVariable String keyword){
     return restaurantService.getRestaurantsByRestaurantName(keyword);
   }
 
   //實作新增餐廳
   @PostMapping("")
   public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant restaurant) {
-    Restaurant addedRestaurant = restaurantService.addRestaurant(restaurant);
-    return new ResponseEntity<>(addedRestaurant, HttpStatus.CREATED);
+    return restaurantService.addRestaurant(restaurant);
   }
+
   //實作修改餐廳資料
   @PutMapping("/{id}")
   public ResponseEntity<Restaurant> updateRestaurant(@PathVariable String id, @RequestBody Restaurant restaurant) {
-    try {
-      // 確保路徑變量 ID 與請求體中的 restaurant_id 匹配
-      if (!id.equals(restaurant.getRestaurant_id())) {
-        return ResponseEntity.badRequest().body(null);
-      }
-
-      Restaurant updatedRestaurant = restaurantService.updateRestaurant(restaurant);
-      if (updatedRestaurant != null) {
-        return ResponseEntity.ok(updatedRestaurant);
-      } else {
-        return ResponseEntity.notFound().build();
-      }
-    } catch (Exception e) {
-      // 記錄錯誤
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    if (!id.equals(restaurant.getRestaurant_id())) {
+      return ResponseEntity.badRequest().build();
     }
+    return restaurantService.updateRestaurant(restaurant);
   }
 
   //實作刪除餐廳
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteRestaurant(@PathVariable String id) {
-    try {
-      restaurantService.deleteRestaurant(id);
-      return ResponseEntity.noContent().build();
-    } catch (Exception e) {
-      // 記錄錯誤
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    return restaurantService.deleteRestaurant(id);
   }
 
 }
